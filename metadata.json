@@ -1,0 +1,6 @@
+{
+  "name": "CampusPass",
+  "description": "Unified Student Leave, Outpass & Campus Exit Management System",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
