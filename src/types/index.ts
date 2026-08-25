@@ -16,12 +16,22 @@ export type RequestStatus =
   | 'PARENT_PENDING'
   | 'PARENT_APPROVED'
   | 'PARENT_REJECTED'
+  | 'HOD_PENDING'
+  | 'HOD_APPROVED'
+  | 'WARDEN_PENDING'
+  | 'WARDEN_APPROVED'
   | 'APPROVAL_PENDING'
   | 'APPROVED'
+  | 'PASS_GENERATED'
+  | 'ACTIVE'
+  | 'EXITED'
+  | 'REENTERED'
   | 'REJECTED'
   | 'CANCELLED'
   | 'EXPIRED'
   | 'COMPLETED';
+
+export type StudentType = 'DAY_SCHOLAR' | 'HOSTELLER';
 
 export type ExceptionStatus = 
   | 'REQUESTED'
@@ -52,6 +62,7 @@ export interface UserProfile {
   email: string;
   name: string;
   role: UserRole;
+  studentType?: StudentType;
   avatarUrl?: string;
   phone?: string;
   department?: string;
@@ -65,6 +76,30 @@ export interface UserProfile {
   advisorName?: string;
   wardenName?: string;
   hodName?: string;
+  parent_id?: string;
+  mentor_id?: string;
+}
+
+export interface ApprovalTask {
+  id: string;
+  requestId: string;
+  studentId: string;
+  studentName: string;
+  registerNumber: string;
+  requestType: RequestType;
+  destination: string;
+  reason: string;
+  startDate: string;
+  endDate: string;
+  approverId: string;
+  approverRole: UserRole;
+  approvalType: 'PARENT' | 'MENTOR' | 'WARDEN';
+  status: 'PENDING' | 'APPROVED' | 'REJECTED';
+  remarks?: string;
+  createdAt: string;
+  respondedAt?: string;
+  waitingHours?: number;
+  agingCategory?: 'NORMAL' | 'ATTENTION' | 'DELAYED';
 }
 
 export interface LeaveRequest {

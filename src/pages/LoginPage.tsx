@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Shield, User, X } from 'lucide-react';
+import { Shield, UserCheck, GraduationCap, Building, ShieldCheck, X } from 'lucide-react';
 import { GlassModal } from '../components/ui/GlassModal';
 
 interface LoginPageProps {
@@ -15,11 +15,30 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onSuccess, id }) => {
   const [error, setError] = useState<string | null>(null);
   const [showGoogleChooser, setShowGoogleChooser] = useState(false);
 
+  const handleQuickRoleLogin = (roleKey: string) => {
+    const roleMap: Record<string, { email: string; pass: string }> = {
+      parent: { email: 'soundharrajvellingiri@gmail.com', pass: 'parent@bitsathy' },
+      mentor: { email: 'soundharvellingiri5912@gmail.com', pass: 'mentor@bitsathy' },
+      warden: { email: 'warden@bitsathy', pass: 'warden@bitsathy' },
+      security: { email: 'soundharraj122005@gmail.com', pass: 'security@bitsathy' }
+    };
+
+    const cred = roleMap[roleKey];
+    if (cred) {
+      setEmail(cred.email);
+      setPassword(cred.pass);
+      const valid = login(cred.email, cred.pass);
+      if (valid) {
+        onSuccess();
+      }
+    }
+  };
+
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!email.trim()) {
-      setError('Please enter your username or email');
+      setError('Please enter your username');
       return;
     }
 
@@ -106,6 +125,74 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onSuccess, id }) => {
         )}
 
         <form onSubmit={handleLoginSubmit} className="space-y-4">
+          {/* Quick Role Portal Access Buttons */}
+          <div className="space-y-2 pb-1">
+            <label className="block text-xs font-bold text-[#5b6472] uppercase tracking-wider">
+              Quick Demo Role Portals:
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              {/* Parent */}
+              <button
+                type="button"
+                onClick={() => handleQuickRoleLogin('parent')}
+                className="p-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/90 text-emerald-950 font-bold text-xs flex items-center space-x-2.5 transition-all cursor-pointer shadow-2xs hover:shadow-xs group"
+              >
+                <div className="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-bold shrink-0 shadow-2xs">
+                  <UserCheck className="w-4 h-4" />
+                </div>
+                <div className="text-left min-w-0">
+                  <div className="font-bold text-xs text-emerald-950 truncate">Parent</div>
+                  <div className="text-[10px] text-emerald-700 font-semibold truncate">Consent Portal</div>
+                </div>
+              </button>
+
+              {/* Mentor */}
+              <button
+                type="button"
+                onClick={() => handleQuickRoleLogin('mentor')}
+                className="p-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-200/90 text-amber-950 font-bold text-xs flex items-center space-x-2.5 transition-all cursor-pointer shadow-2xs hover:shadow-xs group"
+              >
+                <div className="w-7 h-7 rounded-lg bg-amber-600 text-white flex items-center justify-center font-bold shrink-0 shadow-2xs">
+                  <GraduationCap className="w-4 h-4" />
+                </div>
+                <div className="text-left min-w-0">
+                  <div className="font-bold text-xs text-amber-950 truncate">Mentor / HOD</div>
+                  <div className="text-[10px] text-amber-700 font-semibold truncate">Dept Approvals</div>
+                </div>
+              </button>
+
+              {/* Warden */}
+              <button
+                type="button"
+                onClick={() => handleQuickRoleLogin('warden')}
+                className="p-2.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 border border-indigo-200/90 text-indigo-950 font-bold text-xs flex items-center space-x-2.5 transition-all cursor-pointer shadow-2xs hover:shadow-xs group"
+              >
+                <div className="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold shrink-0 shadow-2xs">
+                  <Building className="w-4 h-4" />
+                </div>
+                <div className="text-left min-w-0">
+                  <div className="font-bold text-xs text-indigo-950 truncate">Warden</div>
+                  <div className="text-[10px] text-indigo-700 font-semibold truncate">Hostel Block</div>
+                </div>
+              </button>
+
+              {/* Security */}
+              <button
+                type="button"
+                onClick={() => handleQuickRoleLogin('security')}
+                className="p-2.5 rounded-xl bg-blue-50 hover:bg-blue-100 border border-blue-200/90 text-blue-950 font-bold text-xs flex items-center space-x-2.5 transition-all cursor-pointer shadow-2xs hover:shadow-xs group"
+              >
+                <div className="w-7 h-7 rounded-lg bg-[#1e40af] text-white flex items-center justify-center font-bold shrink-0 shadow-2xs">
+                  <ShieldCheck className="w-4 h-4" />
+                </div>
+                <div className="text-left min-w-0">
+                  <div className="font-bold text-xs text-blue-950 truncate">Security</div>
+                  <div className="text-[10px] text-blue-700 font-semibold truncate">Gate Control</div>
+                </div>
+              </button>
+            </div>
+          </div>
+
           <div>
             <label className="block text-sm font-semibold text-[#172033] mb-1.5">
               Username

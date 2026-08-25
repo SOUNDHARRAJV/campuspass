@@ -6,12 +6,14 @@ interface AppleGlassDateTimePickerProps {
   value: string; // ISO or 'YYYY-MM-DDTHH:mm'
   onChange: (val: string) => void;
   minDate?: string;
+  align?: 'left' | 'right';
 }
 
 export const AppleGlassDateTimePicker: React.FC<AppleGlassDateTimePickerProps> = ({
   label,
   value,
-  onChange
+  onChange,
+  align = 'left'
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -154,7 +156,7 @@ export const AppleGlassDateTimePicker: React.FC<AppleGlassDateTimePickerProps> =
 
       {/* ULTRA-COMPACT APPLE GLASSMORPHIC SIDE-BY-SIDE POPOVER */}
       {isOpen && (
-        <div className="absolute left-0 mt-1.5 z-50 w-[320px] max-w-[90vw] p-3 rounded-2xl bg-white/95 backdrop-blur-xl border border-white/90 shadow-xl text-[#172033] animate-in fade-in zoom-in-95 duration-150 ring-1 ring-slate-900/10">
+        <div className={`absolute ${align === 'right' ? 'right-0' : 'left-0'} mt-1.5 z-50 w-[310px] sm:w-[320px] max-w-[85vw] p-3 rounded-2xl bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-xl text-[#172033] animate-in fade-in zoom-in-95 duration-150 ring-1 ring-slate-900/10`}>
           
           <div className="flex gap-3">
             

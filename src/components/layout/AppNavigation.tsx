@@ -28,6 +28,8 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
         return 'Hostel Approvals';
       case 'SECURITY':
         return 'Gate Verification';
+      case 'MANAGEMENT':
+        return 'Executive Analytics';
       case 'ADMIN':
         return 'Admin Dashboard';
       default:

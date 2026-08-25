@@ -10,6 +10,7 @@ import { DepartmentDashboard } from './pages/DepartmentDashboard';
 import { WardenDashboard } from './pages/WardenDashboard';
 import { SecurityDashboard } from './pages/SecurityDashboard';
 import { AdminDashboard } from './pages/AdminDashboard';
+import { ManagementDashboard } from './pages/ManagementDashboard';
 
 import { ApplyLeaveModal } from './components/common/ApplyLeaveModal';
 import { AuditTrailTable } from './components/common/AuditTrailTable';
@@ -68,6 +69,8 @@ function MainAppContent() {
         return <WardenDashboard />;
       case 'SECURITY':
         return <SecurityDashboard />;
+      case 'MANAGEMENT':
+        return <ManagementDashboard />;
       case 'ADMIN':
         return <AdminDashboard />;
       default:

@@ -131,12 +131,14 @@ export const ApplyLeaveModal: React.FC<ApplyLeaveModalProps> = ({ isOpen, onClos
             label="From Date & Time"
             value={fromDate}
             onChange={val => setFromDate(val)}
+            align="left"
           />
 
           <AppleGlassDateTimePicker
             label="To Date & Time"
             value={toDate}
             onChange={val => setToDate(val)}
+            align="right"
           />
         </div>
 
