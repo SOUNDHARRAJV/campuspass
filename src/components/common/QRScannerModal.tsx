@@ -40,20 +40,14 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({ onClose, id }) =
   const handleExecuteGateMovement = (eventType: 'EXIT' | 'ENTRY') => {
     if (!verificationResult?.pass) return;
 
-    const expectedOtp = verificationResult.pass.otpCode || '4829';
-    if (!enteredOtp || enteredOtp.trim() !== expectedOtp) {
-      setOtpError('Invalid OTP! Please enter the 4-digit Security OTP provided by the student.');
-      return;
-    }
-
     dataService.recordGateMovement(
       verificationResult.pass.id,
       eventType,
       currentUser || undefined,
-      `Verified by Gate Security officer ${currentUser?.name || 'Gate Officer'} with OTP check`
+      `Verified by Gate Security officer ${currentUser?.name || 'Gate Officer'}`
     );
 
-    setActionSuccess(`Gate ${eventType} logged & OTP verified successfully for ${verificationResult.pass.studentName}`);
+    setActionSuccess(`Gate ${eventType} logged successfully for ${verificationResult.pass.studentName}`);
     setEnteredOtp('');
     setOtpError(null);
     setTimeout(() => {
@@ -78,7 +72,7 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({ onClose, id }) =
         </div>
 
         {onClose && (
-          <button onClick={onClose} className="px-4 py-2 rounded-lg bg-slate-100 border border-slate-300 text-[#172033] text-sm font-semibold hover:bg-slate-200">
+          <button onClick={onClose} className="px-4 py-2 rounded-lg bg-slate-100 border border-slate-300 text-[#172033] text-sm font-semibold hover:bg-slate-200 cursor-pointer">
             Close
           </button>
         )}
@@ -124,7 +118,7 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({ onClose, id }) =
 
             {/* Pass details */}
             {verificationResult.pass && (
-              <div className="mt-5 space-y-5">
+              <div className="mt-5 space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm bg-white p-4 rounded-xl border border-slate-200">
                   <div>
                     <span className="text-xs font-semibold text-[#5b6472] uppercase">Student Name</span>
@@ -135,51 +129,27 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({ onClose, id }) =
                     <p className="font-semibold text-[#172033] text-base">{verificationResult.pass.registerNumber}</p>
                   </div>
                   <div>
-                    <span className="text-xs font-semibold text-[#5b6472] uppercase">Department</span>
-                    <p className="font-semibold text-[#172033]">{verificationResult.pass.department}</p>
+                    <span className="text-xs font-semibold text-[#5b6472] uppercase">Department &amp; Hostel</span>
+                    <p className="font-semibold text-[#172033]">{verificationResult.pass.department} • {verificationResult.pass.hostelBlock || 'Hostel'}</p>
                   </div>
                   <div>
                     <span className="text-xs font-semibold text-[#5b6472] uppercase">Destination</span>
                     <p className="font-semibold text-[#172033]">{verificationResult.pass.destination}</p>
                   </div>
+                  <div>
+                    <span className="text-xs font-semibold text-[#5b6472] uppercase">Valid From</span>
+                    <p className="font-semibold text-[#172033]">{new Date(verificationResult.pass.validFrom).toLocaleString()}</p>
+                  </div>
+                  <div>
+                    <span className="text-xs font-semibold text-[#5b6472] uppercase">Valid Until</span>
+                    <p className="font-semibold text-[#172033]">{new Date(verificationResult.pass.validUntil).toLocaleString()}</p>
+                  </div>
                 </div>
 
-                {/* Security OTP Input Box */}
-                {(verificationResult.result === 'VALID_EXIT' || verificationResult.result === 'VALID_ENTRY') && (
-                  <div className="p-4 rounded-xl bg-blue-50 border border-blue-200 text-sm">
-                    <label className="block text-sm font-bold text-[#1e40af] uppercase tracking-wider mb-1">
-                      Enter Student Security OTP:
-                    </label>
-                    <p className="text-xs text-[#5b6472] mb-3">
-                      Ask student for their 4-digit Security OTP displayed on their digital pass to authorize movement.
-                    </p>
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-                      <input
-                        type="password"
-                        maxLength={4}
-                        placeholder="••••"
-                        value={enteredOtp}
-                        onChange={e => {
-                          setEnteredOtp(e.target.value);
-                          setOtpError(null);
-                        }}
-                        className="w-full sm:w-44 h-12 bg-white border border-blue-300 rounded-lg px-4 text-center font-mono text-xl font-bold text-[#1e40af] tracking-widest focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                      {enteredOtp.trim() === (verificationResult.pass.otpCode || '4829') && (
-                        <span className="text-sm font-bold text-emerald-800 bg-emerald-100 px-3 py-2 rounded-lg border border-emerald-300 flex items-center space-x-1.5">
-                          <CheckCircle2 className="w-5 h-5 text-emerald-700" />
-                          <span>OTP VERIFIED</span>
-                        </span>
-                      )}
-                    </div>
-                    {otpError && (
-                      <p className="text-sm font-semibold text-rose-700 mt-2 flex items-center space-x-1.5">
-                        <XCircle className="w-5 h-5 shrink-0 text-rose-600" />
-                        <span>{otpError}</span>
-                      </p>
-                    )}
-                  </div>
-                )}
+                <div className="p-3 rounded-xl bg-blue-50 border border-blue-200 text-xs font-medium text-[#1e40af] flex items-center justify-between">
+                  <span>Pass Token: <strong className="font-mono">{verificationResult.pass.passNumber}</strong></span>
+                  <span className="bg-blue-100 text-[#1e40af] px-2.5 py-1 rounded font-bold font-mono">OTP: {verificationResult.pass.otpCode || '4829'}</span>
+                </div>
               </div>
             )}
 
@@ -187,15 +157,15 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({ onClose, id }) =
             <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3 pt-4 border-t border-slate-200">
               <button
                 onClick={() => setVerificationResult(null)}
-                className="w-full sm:w-auto px-5 py-3 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-300 text-[#172033] text-sm sm:text-base font-semibold"
+                className="w-full sm:w-auto px-5 py-3 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-300 text-[#172033] text-sm sm:text-base font-semibold cursor-pointer"
               >
-                Scan Another Pass
+                Cancel / Scan Another
               </button>
 
               {verificationResult.result === 'VALID_EXIT' && (
                 <button
                   onClick={() => handleExecuteGateMovement('EXIT')}
-                  className="w-full sm:w-auto px-6 py-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-base font-semibold shadow-xs flex items-center justify-center space-x-2 min-h-[44px]"
+                  className="w-full sm:w-auto px-6 py-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-base font-semibold shadow-xs flex items-center justify-center space-x-2 min-h-[44px] cursor-pointer"
                 >
                   <ShieldCheck className="w-5 h-5" />
                   <span>ALLOW EXIT &amp; LOG</span>
@@ -205,7 +175,7 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({ onClose, id }) =
               {verificationResult.result === 'VALID_ENTRY' && (
                 <button
                   onClick={() => handleExecuteGateMovement('ENTRY')}
-                  className="w-full sm:w-auto px-6 py-3 rounded-lg bg-[#1e40af] hover:bg-blue-800 text-white text-base font-semibold shadow-xs flex items-center justify-center space-x-2 min-h-[44px]"
+                  className="w-full sm:w-auto px-6 py-3 rounded-lg bg-[#1e40af] hover:bg-blue-800 text-white text-base font-semibold shadow-xs flex items-center justify-center space-x-2 min-h-[44px] cursor-pointer"
                 >
                   <ShieldCheck className="w-5 h-5" />
                   <span>ALLOW RE-ENTRY &amp; COMPLETE</span>

@@ -9,29 +9,32 @@ interface LoginPageProps {
 }
 
 export const LoginPage: React.FC<LoginPageProps> = ({ onSuccess, id }) => {
-  const { login, loginWithGoogleEmail, triggerGoogleOAuth } = useAuth();
+  const { login, switchUserRole, loginWithGoogleEmail, triggerGoogleOAuth } = useAuth();
   const [email, setEmail] = useState('admin@bitsathy');
   const [password, setPassword] = useState('admin');
   const [error, setError] = useState<string | null>(null);
   const [showGoogleChooser, setShowGoogleChooser] = useState(false);
+  const [animatingRole, setAnimatingRole] = useState<{ name: string; title: string; badge: string } | null>(null);
 
   const handleQuickRoleLogin = (roleKey: string) => {
-    const roleMap: Record<string, { email: string; pass: string }> = {
-      parent: { email: 'soundharrajvellingiri@gmail.com', pass: 'parent@bitsathy' },
-      mentor: { email: 'soundharvellingiri5912@gmail.com', pass: 'mentor@bitsathy' },
-      warden: { email: 'warden@bitsathy', pass: 'warden@bitsathy' },
-      security: { email: 'soundharraj122005@gmail.com', pass: 'security@bitsathy' }
+    const roleTitles: Record<string, { name: string; title: string; badge: string }> = {
+      student: { name: 'Student Dashboard', title: 'Loading Hosteller Portal...', badge: 'STU' },
+      parent: { name: 'Parent Consent Portal', title: 'Connecting Realtime SMS Consent...', badge: 'PAR' },
+      mentor: { name: 'Faculty Advisor / HOD Portal', title: 'Loading Department Approvals...', badge: 'MTR' },
+      warden: { name: 'Hostel Warden Portal', title: 'Loading Hostel Administration...', badge: 'WRD' },
+      security: { name: 'Main Gate Security Console', title: 'Initializing Gate Verification...', badge: 'SEC' },
+      admin: { name: 'System Administrator Portal', title: 'Loading System Dashboard...', badge: 'ADM' }
     };
 
-    const cred = roleMap[roleKey];
-    if (cred) {
-      setEmail(cred.email);
-      setPassword(cred.pass);
-      const valid = login(cred.email, cred.pass);
-      if (valid) {
-        onSuccess();
-      }
-    }
+    const target = roleTitles[roleKey] || { name: 'Dashboard', title: 'Authenticating...', badge: 'APP' };
+    setAnimatingRole(target);
+    setError(null);
+
+    setTimeout(() => {
+      switchUserRole(roleKey);
+      setAnimatingRole(null);
+      onSuccess();
+    }, 450);
   };
 
   const handleLoginSubmit = (e: React.FormEvent) => {
@@ -125,74 +128,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onSuccess, id }) => {
         )}
 
         <form onSubmit={handleLoginSubmit} className="space-y-4">
-          {/* Quick Role Portal Access Buttons */}
-          <div className="space-y-2 pb-1">
-            <label className="block text-xs font-bold text-[#5b6472] uppercase tracking-wider">
-              Quick Demo Role Portals:
-            </label>
-            <div className="grid grid-cols-2 gap-2">
-              {/* Parent */}
-              <button
-                type="button"
-                onClick={() => handleQuickRoleLogin('parent')}
-                className="p-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/90 text-emerald-950 font-bold text-xs flex items-center space-x-2.5 transition-all cursor-pointer shadow-2xs hover:shadow-xs group"
-              >
-                <div className="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-bold shrink-0 shadow-2xs">
-                  <UserCheck className="w-4 h-4" />
-                </div>
-                <div className="text-left min-w-0">
-                  <div className="font-bold text-xs text-emerald-950 truncate">Parent</div>
-                  <div className="text-[10px] text-emerald-700 font-semibold truncate">Consent Portal</div>
-                </div>
-              </button>
-
-              {/* Mentor */}
-              <button
-                type="button"
-                onClick={() => handleQuickRoleLogin('mentor')}
-                className="p-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-200/90 text-amber-950 font-bold text-xs flex items-center space-x-2.5 transition-all cursor-pointer shadow-2xs hover:shadow-xs group"
-              >
-                <div className="w-7 h-7 rounded-lg bg-amber-600 text-white flex items-center justify-center font-bold shrink-0 shadow-2xs">
-                  <GraduationCap className="w-4 h-4" />
-                </div>
-                <div className="text-left min-w-0">
-                  <div className="font-bold text-xs text-amber-950 truncate">Mentor / HOD</div>
-                  <div className="text-[10px] text-amber-700 font-semibold truncate">Dept Approvals</div>
-                </div>
-              </button>
-
-              {/* Warden */}
-              <button
-                type="button"
-                onClick={() => handleQuickRoleLogin('warden')}
-                className="p-2.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 border border-indigo-200/90 text-indigo-950 font-bold text-xs flex items-center space-x-2.5 transition-all cursor-pointer shadow-2xs hover:shadow-xs group"
-              >
-                <div className="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold shrink-0 shadow-2xs">
-                  <Building className="w-4 h-4" />
-                </div>
-                <div className="text-left min-w-0">
-                  <div className="font-bold text-xs text-indigo-950 truncate">Warden</div>
-                  <div className="text-[10px] text-indigo-700 font-semibold truncate">Hostel Block</div>
-                </div>
-              </button>
-
-              {/* Security */}
-              <button
-                type="button"
-                onClick={() => handleQuickRoleLogin('security')}
-                className="p-2.5 rounded-xl bg-blue-50 hover:bg-blue-100 border border-blue-200/90 text-blue-950 font-bold text-xs flex items-center space-x-2.5 transition-all cursor-pointer shadow-2xs hover:shadow-xs group"
-              >
-                <div className="w-7 h-7 rounded-lg bg-[#1e40af] text-white flex items-center justify-center font-bold shrink-0 shadow-2xs">
-                  <ShieldCheck className="w-4 h-4" />
-                </div>
-                <div className="text-left min-w-0">
-                  <div className="font-bold text-xs text-blue-950 truncate">Security</div>
-                  <div className="text-[10px] text-blue-700 font-semibold truncate">Gate Control</div>
-                </div>
-              </button>
-            </div>
-          </div>
-
           <div>
             <label className="block text-sm font-semibold text-[#172033] mb-1.5">
               Username
@@ -269,6 +204,55 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onSuccess, id }) => {
           <span>Sign in with Google</span>
         </button>
 
+        {/* Short 3-Letter Quick Demo Logins Below Google Sign In */}
+        <div className="pt-2 space-y-1.5 border-t border-slate-100">
+          <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 text-center">
+            Direct Demo Dashboard Access
+          </p>
+          <div className="grid grid-cols-5 gap-1.5">
+            <button
+              type="button"
+              onClick={() => handleQuickRoleLogin('student')}
+              title="Student Dashboard (Hosteller)"
+              className="h-8.5 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-300/80 text-slate-800 font-bold text-xs flex items-center justify-center transition-all cursor-pointer shadow-2xs hover:shadow-xs"
+            >
+              STU
+            </button>
+            <button
+              type="button"
+              onClick={() => handleQuickRoleLogin('parent')}
+              title="Parent Consent Portal"
+              className="h-8.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 border border-emerald-300/80 text-emerald-900 font-bold text-xs flex items-center justify-center transition-all cursor-pointer shadow-2xs hover:shadow-xs"
+            >
+              PAR
+            </button>
+            <button
+              type="button"
+              onClick={() => handleQuickRoleLogin('mentor')}
+              title="Faculty Advisor / Mentor Approvals"
+              className="h-8.5 rounded-lg bg-amber-50 hover:bg-amber-100 border border-amber-300/80 text-amber-900 font-bold text-xs flex items-center justify-center transition-all cursor-pointer shadow-2xs hover:shadow-xs"
+            >
+              MTR
+            </button>
+            <button
+              type="button"
+              onClick={() => handleQuickRoleLogin('warden')}
+              title="Hostel Warden Approvals"
+              className="h-8.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 border border-indigo-300/80 text-indigo-900 font-bold text-xs flex items-center justify-center transition-all cursor-pointer shadow-2xs hover:shadow-xs"
+            >
+              WRD
+            </button>
+            <button
+              type="button"
+              onClick={() => handleQuickRoleLogin('security')}
+              title="Main Gate Security Console"
+              className="h-8.5 rounded-lg bg-blue-50 hover:bg-blue-100 border border-blue-300/80 text-blue-900 font-bold text-xs flex items-center justify-center transition-all cursor-pointer shadow-2xs hover:shadow-xs"
+            >
+              SEC
+            </button>
+          </div>
+        </div>
+
         {/* GOOGLE OAUTH ACCOUNT CHOOSER MODAL */}
         {showGoogleChooser && (
           <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
@@ -338,6 +322,27 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onSuccess, id }) => {
                 ))}
               </div>
 
+            </div>
+          </div>
+        )}
+
+        {/* EXECUTIVE GLASSMORPHIC DIRECT LOGIN ANIMATION OVERLAY */}
+        {animatingRole && (
+          <div className="fixed inset-0 z-50 bg-[#172033]/80 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200">
+            <div className="bg-white rounded-2xl p-8 max-w-sm w-full border border-white/90 shadow-2xl text-center space-y-4 animate-in zoom-in-95 duration-200">
+              <div className="w-16 h-16 rounded-2xl bg-[#1e40af] text-white flex items-center justify-center font-extrabold text-xl mx-auto shadow-md animate-pulse">
+                {animatingRole.badge}
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-[#172033] tracking-tight">{animatingRole.name}</h3>
+                <p className="text-xs font-semibold text-[#5b6472] mt-1">{animatingRole.title}</p>
+              </div>
+              <div className="flex justify-center py-2">
+                <div className="w-8 h-8 border-3 border-blue-600 border-t-transparent rounded-full animate-spin" />
+              </div>
+              <p className="text-[11px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 py-1.5 px-3 rounded-full border border-emerald-200 inline-block">
+                ✓ Authentication Verified
+              </p>
             </div>
           </div>
         )}
